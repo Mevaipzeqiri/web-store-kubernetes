@@ -1,0 +1,20 @@
+# PostgreSQL Init Script ConfigMap for Development
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+  namespace: development
+  labels:
+    app: postgres
+    environment: development
+data:
+  init-db.sh: |
+    #!/bin/bash
+    set -e
+    echo "Initializing database schema for development environment..."
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+        -- Database schema initialization goes here
+        -- This will be automatically executed on first run
+        \echo 'Creating tables...'
+    EOSQL
+    echo "Database initialization complete!"

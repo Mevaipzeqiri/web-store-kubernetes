@@ -1,0 +1,19 @@
+# PostgreSQL Init Script ConfigMap for Production
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+  namespace: production
+  labels:
+    app: postgres
+    environment: production
+data:
+  init-db.sh: |
+    #!/bin/bash
+    set -e
+    echo "Initializing database schema for production environment..."
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+        -- Database schema initialization goes here
+        \echo 'Creating tables...'
+    EOSQL
+    echo "Database initialization complete!"

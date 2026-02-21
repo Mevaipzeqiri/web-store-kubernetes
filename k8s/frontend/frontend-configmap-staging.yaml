@@ -1,0 +1,11 @@
+# Staging Environment - Frontend ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: staging
+  labels:
+    app: frontend
+    environment: staging
+data:
+  API_URL: "http://backend.staging.svc.cluster.local:3000/api"

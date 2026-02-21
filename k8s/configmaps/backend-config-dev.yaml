@@ -1,0 +1,29 @@
+# Development Environment - ConfigMap for Backend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: development
+  labels:
+    app: backend
+    environment: development
+data:
+  NODE_ENV: "development"
+  PORT: "3000"
+  CLIENT_URL: "http://frontend.development.svc.cluster.local"
+  DB_HOST: "postgres.development.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "web_store_dev"
+  JWT_EXPIRES_IN: "24h"
+---
+# Development Environment - ConfigMap for Database Init
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-config
+  namespace: development
+  labels:
+    app: postgres
+    environment: development
+data:
+  POSTGRES_DB: "web_store_dev"

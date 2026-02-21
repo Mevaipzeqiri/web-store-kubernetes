@@ -1,0 +1,11 @@
+# Production Environment - Frontend ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: production
+  labels:
+    app: frontend
+    environment: production
+data:
+  API_URL: "http://backend.production.svc.cluster.local:3000/api"

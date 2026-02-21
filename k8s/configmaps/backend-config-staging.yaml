@@ -1,0 +1,29 @@
+# Staging Environment - ConfigMap for Backend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: staging
+  labels:
+    app: backend
+    environment: staging
+data:
+  NODE_ENV: "staging"
+  PORT: "3000"
+  CLIENT_URL: "http://frontend.staging.svc.cluster.local"
+  DB_HOST: "postgres.staging.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "web_store_staging"
+  JWT_EXPIRES_IN: "12h"
+---
+# Staging Environment - ConfigMap for Database Init
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-config
+  namespace: staging
+  labels:
+    app: postgres
+    environment: staging
+data:
+  POSTGRES_DB: "web_store_staging"

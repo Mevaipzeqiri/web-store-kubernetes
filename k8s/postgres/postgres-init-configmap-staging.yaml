@@ -1,0 +1,19 @@
+# PostgreSQL Init Script ConfigMap for Staging
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+  namespace: staging
+  labels:
+    app: postgres
+    environment: staging
+data:
+  init-db.sh: |
+    #!/bin/bash
+    set -e
+    echo "Initializing database schema for staging environment..."
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+        -- Database schema initialization goes here
+        \echo 'Creating tables...'
+    EOSQL
+    echo "Database initialization complete!"

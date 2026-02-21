@@ -1,0 +1,42 @@
+# Development Environment - Resource Quota
+# Limit: 1 CPU core, 2Gi memory
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: dev-quota
+  namespace: development
+  labels:
+    environment: development
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 2Gi
+    limits.cpu: "2"
+    limits.memory: 3Gi
+    persistentvolumeclaims: "5"
+    services: "10"
+    pods: "10"
+---
+# Development Environment - Limit Range
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: dev-limit-range
+  namespace: development
+  labels:
+    environment: development
+spec:
+  limits:
+  - max:
+      cpu: "1"
+      memory: 1Gi
+    min:
+      cpu: 50m
+      memory: 64Mi
+    default:
+      cpu: 100m
+      memory: 128Mi
+    defaultRequest:
+      cpu: 50m
+      memory: 64Mi
+    type: Container
