@@ -16,6 +16,7 @@ frontend/angular.json
 frontend/tsconfig*.json
 frontend/package.json
 frontend/package-lock.json
+db_web_store_docker
 
 # Build outputs
 dist/

@@ -28,32 +28,28 @@ Project/
 └── deploy.sh              # ONE SCRIPT TO DEPLOY EVERYTHING!
 ```
 
-## ⚡ Quick Start (3 Steps!)
+## ⚡ Quick Start for Testing (3 Steps!)
+
+> **Note:** Docker images are already built and publicly available on Docker Hub.  
+> No build step needed — just clone, start Minikube, and deploy!
 
 ### Step 1: Install Prerequisites
-**You need to install these first** (see INSTALLATION.md):
-1. ✅ Docker (you already have this!)
-2. ⬜ Minikube - Local Kubernetes
-3. ⬜ kubectl - Kubernetes command tool
-4. ⬜ Docker Hub account - To store images
-
-### Step 2: Build and Push Docker Images
 
 ```bash
-# Build backend image
-cd backend
-docker build -t mevaipzeqiri/web-store-backend:latest .
+# Install Minikube
+brew install minikube
 
-# Build frontend image
-cd ../frontend
-docker build -t mevaipzeqiri/web-store-frontend:latest .
+# Install kubectl
+brew install kubectl
 
-# Login to Docker Hub
-docker login
+# Make sure Docker Desktop is running
+```
 
-# Push images
-docker push mevaipzeqiri/web-store-backend:latest
-docker push mevaipzeqiri/web-store-frontend:latest
+### Step 2: Start Minikube
+
+```bash
+minikube start --cpus=3 --memory=5120 --driver=docker
+minikube addons enable metrics-server
 ```
 
 ### Step 3: Deploy Everything!
@@ -62,14 +58,18 @@ docker push mevaipzeqiri/web-store-frontend:latest
 ./deploy.sh
 ```
 
-That's it! The script will:
-- ✅ Start Minikube (if not running)
-- ✅ Create 3 environments (dev, staging, production)
-- ✅ Deploy PostgreSQL databases
-- ✅ Deploy backend APIs
-- ✅ Deploy frontend websites
-- ✅ Setup autoscaling
-- ✅ Show you how to access your application
+The script automatically:
+- ✅ Creates 3 namespaces (development, staging, production)
+- ✅ Applies all ConfigMaps and Secrets
+- ✅ Deploys PostgreSQL with persistent storage
+- ✅ Loads the complete database schema (backend/database/schema.sql)
+- ✅ Deploys backend APIs
+- ✅ Deploys frontend (Angular + Nginx)
+- ✅ Applies Resource Quotas
+- ✅ Installs VPA CRDs and configures HPA + VPA autoscaling
+- ✅ Pulls Docker images automatically from Docker Hub (no login needed)
+
+**Total deployment time: ~3-5 minutes**
 
 ## 🌐 Access Your Application
 
@@ -90,11 +90,18 @@ Open the URL in your browser!
 
 ## 📊 The 3 Environments
 
-| Environment | CPU | Memory | Pods | Autoscaling |
-|-------------|-----|--------|------|-------------|
-| Development | 1 core | 2GB | 1 each | No |
-| Staging     | 2 cores | 4GB | 3 each | Yes (HPA + VPA) |
-| Production  | Unlimited | Unlimited | 3+ each | Yes (HPA + VPA) |
+| Environment | CPU Quota | Memory Quota | Replicas | HPA | VPA |
+|-------------|-----------|--------------|----------|-----|-----|
+| Development | 1 core | 2GB | 1 each | No | Yes (recommendation) |
+| Staging | 2 cores | 4GB | 3 each | Yes (max 6) | Yes (recommendation) |
+| Production | Unlimited | Unlimited | 3 each | Yes (max 10) | Yes (recommendation) |
+
+## 🐳 Docker Images (Public — No Login Required)
+
+| Image | Docker Hub |
+|-------|-----------|
+| Backend (Node.js) | `mevaipzeqiri/web-store-backend:latest` |
+| Frontend (Angular/Nginx) | `mevaipzeqiri/web-store-frontend:latest` |
 
 ## 🛠️ Useful Commands
 
@@ -112,7 +119,7 @@ kubectl logs -n development -l app=backend -f
 kubectl logs -n development -l app=frontend -f
 
 # Check database
-kubectl exec -n development postgres-0 -- psql -U webstore_user -d web_store_dev -c 'SELECT * FROM roles;'
+kubectl exec -n development postgres-0 -- psql -U dev_user -d web_store_dev -c 'SELECT * FROM roles;'
 
 # Check autoscaling (staging/production only)
 kubectl get hpa -n production
